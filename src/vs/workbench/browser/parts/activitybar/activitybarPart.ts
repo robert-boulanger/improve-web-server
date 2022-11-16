@@ -47,7 +47,7 @@ import { Registry } from 'vs/platform/registry/common/platform';
 import { Extensions, IProfileStorageRegistry } from 'vs/workbench/services/userDataProfile/common/userDataProfileStorageRegistry';
 import { IUserDataProfileService, PROFILES_TTILE } from 'vs/workbench/services/userDataProfile/common/userDataProfile';
 import { IUserDataProfilesService } from 'vs/platform/userDataProfile/common/userDataProfile';
-import { hiddenActivities } from 'vs/scinteco/tweaks';
+import { hiddenActivities } from 'vs/base/common/tweaks';
 interface IPlaceholderViewContainer {
 	readonly id: string;
 	readonly name?: string;

@@ -22,7 +22,7 @@ import { IPickerQuickAccessItem, IPickerQuickAccessProviderOptions, PickerQuickA
 import { IQuickPickSeparator } from 'vs/platform/quickinput/common/quickInput';
 import { IStorageService, StorageScope, StorageTarget } from 'vs/platform/storage/common/storage';
 import { ITelemetryService } from 'vs/platform/telemetry/common/telemetry';
-import { hiddenActivities } from 'vs/scinteco/tweaks';
+import { hiddenActivities } from 'vs/base/common/tweaks';
 
 export interface ICommandQuickPick extends IPickerQuickAccessItem {
 	commandId: string;
