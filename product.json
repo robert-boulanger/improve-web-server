@@ -1,6 +1,6 @@
 {
-	"nameShort": "OpenVSCode Server",
-	"nameLong": "OpenVSCode Server",
+	"nameShort": "improve web",
+	"nameLong": "improve web",
 	"applicationName": "openvscode-server",
 	"dataFolderName": ".openvscode-server",
 	"win32MutexName": "openvscodeserver",

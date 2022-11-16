@@ -23,42 +23,48 @@ At Gitpod, we've been asked a lot about how we do it. So we thought we might as 
 ### Docker
 
 - Start the server:
+
 ```bash
 docker run -it --init -p 3000:3000 -v "$(pwd):/home/workspace:cached" gitpod/openvscode-server
 ```
-- Visit the URL printed in your terminal.
 
+- Visit the URL printed in your terminal.
 
 _Note_: Feel free to use the `nightly` tag to test the latest version, i.e. `gitpod/openvscode-server:nightly`.
 
 #### Custom Environment
+
 - If you want to add dependencies to this Docker image, here is a template to help:
-	```Dockerfile
 
-	FROM gitpod/openvscode-server:latest
+  ```Dockerfile
 
-	USER root # to get permissions to install packages and such
-	RUN # the installation process for software needed
-	USER openvscode-server # to restore permissions for the web interface
+  FROM gitpod/openvscode-server:latest
 
-	```
+  USER root # to get permissions to install packages and such
+  RUN # the installation process for software needed
+  USER openvscode-server # to restore permissions for the web interface
+
+  ```
+
 - For additional possibilities, please consult the `Dockerfile` for OpenVSCode Server at https://github.com/gitpod-io/openvscode-releases/
 
 ### Linux
 
 - [Download the latest release](https://github.com/gitpod-io/openvscode-server/releases/latest)
 - Untar and run the server
-	```bash
-	tar -xzf openvscode-server-v${OPENVSCODE_SERVER_VERSION}.tar.gz
-	cd openvscode-server-v${OPENVSCODE_SERVER_VERSION}
-	./bin/openvscode-server # you can add arguments here, use --help to list all of the possible options
-	```
+
+  ```bash
+  tar -xzf openvscode-server-v${OPENVSCODE_SERVER_VERSION}.tar.gz
+  cd openvscode-server-v${OPENVSCODE_SERVER_VERSION}
+  ./bin/openvscode-server # you can add arguments here, use --help to list all of the possible options
+  ```
 
   From the possible entrypoint arguments, the most notable ones are
-	- `--port` - the port number to start the server on, this is 3000 by default
-	- `--without-connection-token` - used by default in the docker image
-	- `--connection-token` & `--connection-secret` for securing access to the IDE, you can read more about it in [Securing access to your IDE](#securing-access-to-your-ide).
-	-  `--host` - determines the host the server is listening on. It defaults to `localhost`, so for accessing remotely it's a good idea to add `--host 0.0.0.0` to your launch arguments.
+
+  - `--port` - the port number to start the server on, this is 3000 by default
+  - `--without-connection-token` - used by default in the docker image
+  - `--connection-token` & `--connection-secret` for securing access to the IDE, you can read more about it in [Securing access to your IDE](#securing-access-to-your-ide).
+  - `--host` - determines the host the server is listening on. It defaults to `localhost`, so for accessing remotely it's a good idea to add `--host 0.0.0.0` to your launch arguments.
 
 - Visit the URL printed in your terminal.
 
@@ -103,4 +109,130 @@ To learn what others are up to and to provide feedback, please head over to the 
 You can also follow us on Twitter [@gitpod](https://twitter.com/gitpod) or come [chat with us](https://www.gitpod.io/chat).
 
 ## Legal
+
 This project is not affiliated with Microsoft Corporation.
+
+## Changes by scinteco:
+
+### src/vs/workbench/browser/parts/activitybar/activitybarPart.ts
+
+We remove items from the left sidebar, mostly Debug, SCM and extensions
+
+- Line 50
+
+  ```ts
+  import { hiddenActivities } from "vs/scinteco/tweaks";
+  ```
+
+- Line 782
+
+  ```ts
+  if (hiddenActivities.indexOf(viewContainer.id) < 0)
+  ```
+
+- Line 1002
+
+  ```ts
+  const cont = JSON.parse(this.pinnedViewContainersValue);
+  return cont.filter((item: IPinnedViewContainer) => {
+  	return hiddenActivities.indexOf(item.id) < 0;
+  });
+  ```
+
+### src/vs/base/browser/ui/menu/menu.ts
+
+We remove items from the menu, mostly Run, the Terminal and everythin inside the File menu which would request access to the servers file structure
+
+- Line 28
+
+  ```ts
+  import { hiddenActivities } from "vs/scinteco/tweaks";
+  ```
+
+- Line 515
+  ```ts
+  if (hiddenActivities.indexOf(this._action.id) >= 0) {
+  	return;
+  }
+  ```
+
+### src/vs/platform/quickinput/browser/commandsQuickAccess.ts
+
+Removes everything from the global command palette which we do not need or want
+
+- Line 25
+
+  ```ts
+  import { hiddenActivities } from "vs/scinteco/tweaks";
+  ```
+
+- Line 128
+  ```ts
+  if (hiddenActivities.indexOf(commandPick.commandId) >= 0) {
+  	continue;
+  }
+  ```
+
+### src/vs/scinteco/tweaks.ts
+
+Configure here all commands in vscode we do not need for improve
+
+```ts
+export const hiddenActivities = [
+	"workbench.view.scm",
+	"workbench.view.debug",
+	"workbench.view.extensions",
+	"workbench.action.terminal.toggleTerminal",
+	"terminal",
+	"workbench.action.files.openFile",
+	"workbench.action.files.openFolder",
+	"addRootFolder",
+	"workbench.action.closeFolder",
+	"workbench.action.files.saveAs",
+	"workbench.action.saveWorkspaceAs",
+	"workbench.action.duplicateWorkspaceInNewWindow",
+	"menubar.submenu.Run",
+	"menubar.submenu.Terminal",
+	"workbench.action.openWorkspace",
+	"openRecentWorkspace",
+	"workbench.action.files.newUntitledFile",
+	"welcome.showNewFileEntries",
+];
+```
+
+### src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.ts
+
+This changes only the text in the welcome page
+
+- Line 755
+  ```ts
+  $(
+  	"p.subtitle.description",
+  	{},
+  	localize(
+  		{
+  			key: "gettingStarted.editingEvolved",
+  			comment: ["Shown as subtitle on the Welcome page."],
+  		},
+  		"Manage, trace and control all your data"
+  	)
+  );
+  ```
+
+### src/vs/workbench/contrib/preferences/browser/settingsEditor2.ts
+
+We remove any chance for the user to change the global settings server side, which would allow th change the behaviour for all users. This can only be done by an admin who has access to the server side settings.json.
+The only twaek here is to set enable remote settings to false
+
+- Line 612
+  ```ts
+  this.settingsTargetsWidget = this._register(
+  	this.instantiationService.createInstance(
+  		SettingsTargetsWidget,
+  		targetWidgetContainer,
+  		{ enableRemoteSettings: false }
+  	)
+  );
+  ```
+
+### src/vs/workbench/contrib/welcomeGettingStarted/common/gettingStartedContent.ts

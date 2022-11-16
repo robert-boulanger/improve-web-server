@@ -1,31 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 260 260" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
-    <g transform="matrix(1,0,0,1,-589,-1078)">
-        <g transform="matrix(1,0,0,1,0,999)">
-            <g opacity="0.1">
-                <g transform="matrix(1.06122,0,0,1.03704,-43.4898,-1044.78)">
-                    <path d="M841,1317L596,1317L596,1101L841,1101L841,1317ZM601.654,1106.79L601.654,1311.21L835.346,1311.21L835.346,1106.79L601.654,1106.79Z"/>
-                </g>
-                <g transform="matrix(1,0,0,1,1,-999)">
-                    <rect x="665" y="1100" width="18" height="216"/>
-                </g>
-                <g transform="matrix(1,0,0,1,0,-1000)">
-                    <rect x="701" y="1121" width="70" height="18"/>
-                </g>
-                <g transform="matrix(1,0,0,1,0,-860)">
-                    <rect x="701" y="1121" width="70" height="18"/>
-                </g>
-                <g transform="matrix(1.25714,0,0,1,-162.757,-965)">
-                    <rect x="701" y="1121" width="70" height="18"/>
-                </g>
-                <g transform="matrix(1.25714,0,0,1,-162.757,-930)">
-                    <rect x="701" y="1121" width="70" height="18"/>
-                </g>
-                <g transform="matrix(1.25714,0,0,1,-162.757,-895)">
-                    <rect x="701" y="1121" width="70" height="18"/>
-                </g>
-            </g>
-        </g>
+<svg width="100%" height="100%" viewBox="0 0 40 41" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g>
+        <path d="M12.864,39.722C7.675,37.672 3.561,33.559 1.51,28.37C-2.687,18.055 2.131,6.106 12.31,1.588C14.746,0.561 17.363,0.032 20.007,0.032C28.187,0.032 35.563,5.098 38.5,12.732C40.586,17.941 40.498,23.775 38.255,28.919C37.618,30.369 36.177,31.309 34.593,31.309C32.399,31.309 30.593,29.504 30.593,27.309C30.593,26.796 30.692,26.288 30.884,25.812L30.918,25.731C32.31,22.546 32.366,18.932 31.073,15.706C29.349,11.101 24.923,8.031 20.006,8.031C18.444,8.031 16.897,8.341 15.456,8.942C9.248,11.762 6.345,19.088 8.936,25.395C10.148,28.489 12.574,30.957 15.647,32.221L15.788,32.278C17.325,32.873 18.343,34.36 18.343,36.008C18.343,38.202 16.538,40.008 14.343,40.008C13.836,40.008 13.334,39.912 12.863,39.724L12.864,39.722ZM11.368,20C11.369,15.265 15.265,11.37 20,11.37C24.735,11.37 28.632,15.267 28.632,20.002C28.632,24.737 24.735,28.634 20,28.634C15.264,28.633 11.368,24.737 11.368,20.001C11.368,20.001 11.368,20 11.368,20Z" style="fill:rgb(217,217,217);fill-rule:nonzero;"/>
     </g>
 </svg>

@@ -47,7 +47,7 @@ import { Registry } from 'vs/platform/registry/common/platform';
 import { Extensions, IProfileStorageRegistry } from 'vs/workbench/services/userDataProfile/common/userDataProfileStorageRegistry';
 import { IUserDataProfileService, PROFILES_TTILE } from 'vs/workbench/services/userDataProfile/common/userDataProfile';
 import { IUserDataProfilesService } from 'vs/platform/userDataProfile/common/userDataProfile';
-
+import { hiddenActivities } from 'vs/scinteco/tweaks';
 interface IPlaceholderViewContainer {
 	readonly id: string;
 	readonly name?: string;
@@ -779,7 +779,9 @@ export class ActivitybarPart extends Part implements IPaneCompositeSelectorPart 
 	}
 
 	private addComposite(viewContainer: ViewContainer): void {
-		this.compositeBar.addComposite({ id: viewContainer.id, name: typeof viewContainer.title === 'string' ? viewContainer.title : viewContainer.title.value, order: viewContainer.order, requestedIndex: viewContainer.requestedIndex });
+		if (hiddenActivities.indexOf(viewContainer.id) < 0) {
+			this.compositeBar.addComposite({ id: viewContainer.id, name: typeof viewContainer.title === 'string' ? viewContainer.title : viewContainer.title.value, order: viewContainer.order, requestedIndex: viewContainer.requestedIndex });
+		}
 	}
 
 	private hideComposite(compositeId: string): void {
@@ -997,7 +999,10 @@ export class ActivitybarPart extends Part implements IPaneCompositeSelectorPart 
 	}
 
 	private getPinnedViewContainers(): IPinnedViewContainer[] {
-		return JSON.parse(this.pinnedViewContainersValue);
+		const cont = JSON.parse(this.pinnedViewContainersValue);
+		return cont.filter((item: IPinnedViewContainer) => {
+			return hiddenActivities.indexOf(item.id) < 0;
+		});
 	}
 
 	private setPinnedViewContainers(pinnedViewContainers: IPinnedViewContainer[]): void {

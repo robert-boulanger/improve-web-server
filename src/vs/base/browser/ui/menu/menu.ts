@@ -25,7 +25,7 @@ import { DisposableStore } from 'vs/base/common/lifecycle';
 import { isLinux, isMacintosh } from 'vs/base/common/platform';
 import { ScrollbarVisibility, ScrollEvent } from 'vs/base/common/scrollable';
 import * as strings from 'vs/base/common/strings';
-
+import { hiddenActivities } from 'vs/scinteco/tweaks';
 export const MENU_MNEMONIC_REGEX = /\(&([^\s&])\)|(^|[^&])&([^\s&])/;
 export const MENU_ESCAPED_MNEMONIC_REGEX = /(&amp;)?(&amp;)([^\s&])/g;
 
@@ -509,6 +509,10 @@ class BaseMenuActionViewItem extends BaseActionViewItem {
 		super.render(container);
 
 		if (!this.element) {
+			return;
+		}
+
+		if (hiddenActivities.indexOf(this._action.id) >= 0) {
 			return;
 		}
 

@@ -55,7 +55,7 @@ type GettingStartedWalkthroughContent = BuiltinGettingStartedCategory[];
 type GettingStartedStartEntryContent = BuiltinGettingStartedStartEntry[];
 
 export const startEntries: GettingStartedStartEntryContent = [
-	{
+	/*{
 		id: 'welcome.showNewFileEntries',
 		title: localize('gettingStarted.newFile.title', "New File..."),
 		description: localize('gettingStarted.newFile.description', "Open a new untitled file, notebook, or custom editor."),
@@ -118,8 +118,30 @@ export const startEntries: GettingStartedStartEntryContent = [
 			type: 'startEntry',
 			command: 'command:workbench.action.files.openFolderViaWorkspace',
 		}
+	},*/
+	{
+		id: 'topLevelImproveConfigure',
+		title: 'Configure improve Repository...',
+		description: 'Configure the access to the predefined improve repositories',
+		when: 'config.git.enabled && !git.missing',
+		icon: Codicon.sourceControl,
+		content: {
+			type: 'startEntry',
+			command: 'command:improve.configureServer',
+		}
 	},
 	{
+		id: 'topLevelImproveOpen',
+		title: 'Open Repository...',
+		description: 'Connect to a remote repository browse, search, edit, and save',
+		when: 'config.git.enabled && !git.missing',
+		icon: Codicon.sourceControl,
+		content: {
+			type: 'startEntry',
+			command: 'command:improve.selectRepository',
+		}
+	},
+	/*{
 		id: 'topLevelGitClone',
 		title: localize('gettingStarted.topLevelGitClone.title', "Clone Git Repository..."),
 		description: localize('gettingStarted.topLevelGitClone.description', "Clone a remote repository to a local folder"),
@@ -140,7 +162,7 @@ export const startEntries: GettingStartedStartEntryContent = [
 			type: 'startEntry',
 			command: 'command:remoteHub.openRepository',
 		}
-	},
+	},*/
 	{
 		id: 'topLevelShowWalkthroughs',
 		title: localize('gettingStarted.topLevelShowWalkthroughs.title', "Open a Walkthrough..."),
@@ -181,8 +203,8 @@ const Button = (title: string, href: string) => `[${title}](${href})`;
 export const walkthroughs: GettingStartedWalkthroughContent = [
 	{
 		id: 'Setup',
-		title: localize('gettingStarted.setup.title', "Get Started with VS Code"),
-		description: localize('gettingStarted.setup.description', "Discover the best customizations to make VS Code yours."),
+		title: localize('gettingStarted.setup.title', "Get Started with improve"),
+		description: localize('gettingStarted.setup.description', "Discover the best customizations to make improve web yours."),
 		isFeatured: true,
 		icon: setupIcon,
 		when: '!isWeb',
@@ -267,8 +289,8 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 
 	{
 		id: 'SetupWeb',
-		title: localize('gettingStarted.setupWeb.title', "Get Started with VS Code in the Web"),
-		description: localize('gettingStarted.setupWeb.description', "Discover the best customizations to make VS Code in the Web yours."),
+		title: localize('gettingStarted.setupWeb.title', "Get Started with improve in the Web"),
+		description: localize('gettingStarted.setupWeb.description', "Discover the best customizations to make improve in the Web yours."),
 		isFeatured: true,
 		icon: setupIcon,
 		when: 'isWeb',
@@ -299,7 +321,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 				{
 					id: 'commandPaletteTaskWeb',
 					title: localize('gettingStarted.commandPalette.title', "One shortcut to access everything"),
-					description: localize('gettingStarted.commandPalette.description.interpolated', "Commands are the keyboard way to accomplish any task in VS Code. **Practice** by looking up your frequent ones to save time.\n{0}\n__Try searching for 'view toggle'.__", Button(localize('commandPalette', "Open Command Palette"), 'command:workbench.action.showCommands')),
+					description: localize('gettingStarted.commandPalette.description.interpolated', "Commands are the keyboard way to accomplish any task in improve. **Practice** by looking up your frequent ones to save time.\n{0}\n__Try searching for 'view toggle'.__", Button(localize('commandPalette', "Open Command Palette"), 'command:workbench.action.showCommands')),
 					media: { type: 'svg', altText: 'Command Palette overlay for searching and executing commands.', path: 'commandPalette.svg' },
 				},
 				{
@@ -314,7 +336,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 				{
 					id: 'extensionsWebWeb',
 					title: localize('gettingStarted.extensions.title', "Limitless extensibility"),
-					description: localize('gettingStarted.extensionsWeb.description.interpolated', "Extensions are VS Code's power-ups. A growing number are becoming available in the web.\n{0}", Button(localize('browsePopular', "Browse Popular Web Extensions"), 'command:workbench.extensions.action.showPopularExtensions')),
+					description: localize('gettingStarted.extensionsWeb.description.interpolated', "Extensions are improve's power-ups. A growing number are becoming available in the web.\n{0}", Button(localize('browsePopular', "Browse Popular Web Extensions"), 'command:workbench.extensions.action.showPopularExtensions')),
 					when: 'workspacePlatform == \'webworker\'',
 					media: {
 						type: 'svg', altText: 'VS Code extension marketplace with featured language extensions', path: 'extensions-web.svg'
@@ -323,7 +345,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 				{
 					id: 'findLanguageExtensionsWeb',
 					title: localize('gettingStarted.findLanguageExts.title', "Rich support for all your languages"),
-					description: localize('gettingStarted.findLanguageExts.description.interpolated', "Code smarter with syntax highlighting, code completion, linting and debugging. While many languages are built-in, many more can be added as extensions.\n{0}", Button(localize('browseLangExts', "Browse Language Extensions"), 'command:workbench.extensions.action.showLanguageExtensions')),
+					description: localize('gettingStarted.findLanguageExts.description.interpolated', "Work smarter with syntax highlighting, code completion, linting and debugging. While many languages are built-in, many more can be added as extensions.\n{0}", Button(localize('browseLangExts', "Browse Language Extensions"), 'command:workbench.extensions.action.showLanguageExtensions')),
 					when: 'workspacePlatform != \'webworker\'',
 					media: {
 						type: 'svg', altText: 'Language extensions', path: 'languages.svg'
@@ -357,19 +379,19 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 		icon: beginnerIcon,
 		isFeatured: true,
 		next: 'Intermediate',
-		description: localize('gettingStarted.beginner.description', "Jump right into VS Code and get an overview of the must-have features."),
+		description: localize('gettingStarted.beginner.description', "Jump right into improve and get an overview of the must-have features."),
 		content: {
 			type: 'steps',
 			steps: [
 				{
 					id: 'playground',
 					title: localize('gettingStarted.playground.title', "Redefine your editing skills"),
-					description: localize('gettingStarted.playground.description.interpolated', "Want to code faster and smarter? Practice powerful code editing features in the interactive playground.\n{0}", Button(localize('openEditorPlayground', "Open Editor Playground"), 'command:toSide:workbench.action.showInteractivePlayground')),
+					description: localize('gettingStarted.playground.description.interpolated', "Want to waork faster and smarter? Practice powerful code editing features in the interactive playground.\n{0}", Button(localize('openEditorPlayground', "Open Editor Playground"), 'command:toSide:workbench.action.showInteractivePlayground')),
 					media: {
 						type: 'svg', altText: 'Editor Playground.', path: 'interactivePlayground.svg'
 					},
 				},
-				{
+				/*{
 					id: 'terminal',
 					title: localize('gettingStarted.terminal.title', "Convenient built-in terminal"),
 					description: localize('gettingStarted.terminal.description.interpolated', "Quickly run shell commands and monitor build output, right next to your code.\n{0}", Button(localize('showTerminal', "Show Terminal Panel"), 'command:workbench.action.terminal.toggleTerminal')),
@@ -377,11 +399,11 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 					media: {
 						type: 'svg', altText: 'Integrated terminal running a few npm commands', path: 'terminal.svg'
 					},
-				},
+				},*/
 				{
 					id: 'extensions',
 					title: localize('gettingStarted.extensions.title', "Limitless extensibility"),
-					description: localize('gettingStarted.extensions.description.interpolated', "Extensions are VS Code's power-ups. They range from handy productivity hacks, expanding out-of-the-box features, to adding completely new capabilities.\n{0}", Button(localize('browseRecommended', "Browse Recommended Extensions"), 'command:workbench.extensions.action.showRecommendedExtensions')),
+					description: localize('gettingStarted.extensions.description.interpolated', "Extensions are improve's power-ups. They range from handy productivity hacks, expanding out-of-the-box features, to adding completely new capabilities.\n{0}", Button(localize('browseRecommended', "Browse Recommended Extensions"), 'command:workbench.extensions.action.showRecommendedExtensions')),
 					when: 'workspacePlatform != \'webworker\'',
 					media: {
 						type: 'svg', altText: 'VS Code extension marketplace with featured language extensions', path: 'extensions.svg'
@@ -397,7 +419,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 				},
 				{
 					id: 'workspaceTrust',
-					title: localize('gettingStarted.workspaceTrust.title', "Safely browse and edit code"),
+					title: localize('gettingStarted.workspaceTrust.title', "Safely browse and edit resources"),
 					description: localize('gettingStarted.workspaceTrust.description.interpolated', "{0} lets you decide whether your project folders should **allow or restrict** automatic code execution __(required for extensions, debugging, etc)__.\nOpening a file/folder will prompt to grant trust. You can always {1} later.", Button(localize('workspaceTrust', "Workspace Trust"), 'https://github.com/microsoft/vscode-docs/blob/workspaceTrust/docs/editor/workspace-trust.md'), Button(localize('enableTrust', "enable trust"), 'command:toSide:workbench.action.manageTrustedDomain')),
 					when: 'workspacePlatform != \'webworker\' && !isWorkspaceTrusted && workspaceFolderCount == 0',
 					media: {
@@ -419,7 +441,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 		isFeatured: false,
 		title: localize('gettingStarted.intermediate.title', "Boost your Productivity"),
 		icon: intermediateIcon,
-		description: localize('gettingStarted.intermediate.description', "Optimize your development workflow with these tips & tricks."),
+		description: localize('gettingStarted.intermediate.description', "Optimize your workflow with these tips & tricks."),
 		content: {
 			type: 'steps',
 			steps: [
@@ -431,7 +453,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 						type: 'svg', altText: 'Multiple editors in split view.', path: 'sideBySide.svg',
 					},
 				},
-				{
+				/*{
 					id: 'debugging',
 					title: localize('gettingStarted.debug.title', "Watch your code in action"),
 					description: localize('gettingStarted.debug.description.interpolated', "Accelerate your edit, build, test, and debug loop by setting up a launch configuration.\n{0}", Button(localize('runProject', "Run your Project"), 'command:workbench.action.debug.selectandstart')),
@@ -439,7 +461,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 					media: {
 						type: 'svg', altText: 'Run and debug view.', path: 'debug.svg',
 					},
-				},
+				},*/
 				{
 					id: 'scmClone',
 					title: localize('gettingStarted.scm.title', "Track your code with Git"),

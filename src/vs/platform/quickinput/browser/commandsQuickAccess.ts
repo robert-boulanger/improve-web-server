@@ -22,6 +22,7 @@ import { IPickerQuickAccessItem, IPickerQuickAccessProviderOptions, PickerQuickA
 import { IQuickPickSeparator } from 'vs/platform/quickinput/common/quickInput';
 import { IStorageService, StorageScope, StorageTarget } from 'vs/platform/storage/common/storage';
 import { ITelemetryService } from 'vs/platform/telemetry/common/telemetry';
+import { hiddenActivities } from 'vs/scinteco/tweaks';
 
 export interface ICommandQuickPick extends IPickerQuickAccessItem {
 	commandId: string;
@@ -124,6 +125,10 @@ export abstract class AbstractCommandsQuickAccessProvider extends PickerQuickAcc
 		let addSeparator = false;
 		for (let i = 0; i < filteredCommandPicks.length; i++) {
 			const commandPick = filteredCommandPicks[i];
+			if (hiddenActivities.indexOf(commandPick.commandId) >= 0) {
+				continue;
+			}
+
 			const keybinding = this.keybindingService.lookupKeybinding(commandPick.commandId);
 			const ariaLabel = keybinding ?
 				localize('commandPickAriaLabelWithKeybinding', "{0}, {1}", commandPick.label, keybinding.getAriaLabel()) :
