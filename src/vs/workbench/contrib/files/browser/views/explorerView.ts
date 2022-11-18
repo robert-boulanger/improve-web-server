@@ -536,6 +536,9 @@ export class ExplorerView extends ViewPane implements IExplorerView {
 	}
 
 	private setContextKeys(stat: ExplorerItem | null | undefined): void {
+		if (stat instanceof ExplorerItem && stat.resource.scheme === 'improve') {
+			this.commandService.executeCommand('improve.resourceSelect', stat?.resource);
+		}
 		const folders = this.contextService.getWorkspace().folders;
 		const resource = stat ? stat.resource : folders[folders.length - 1].uri;
 		stat = stat || this.explorerService.findClosest(resource);
@@ -584,20 +587,30 @@ export class ExplorerView extends ViewPane implements IExplorerView {
 			arg = roots.length === 1 ? roots[0].resource : {};
 		}
 
-		this.contextMenuService.showContextMenu({
-			menuId: MenuId.ExplorerContext,
-			menuActionOptions: { arg, shouldForwardArgs: true },
-			contextKeyService: this.tree.contextKeyService,
-			getAnchor: () => anchor,
-			onHide: (wasCancelled?: boolean) => {
-				if (wasCancelled) {
-					this.tree.domFocus();
-				}
-			},
-			getActionsContext: () => stat && selection && selection.indexOf(stat) >= 0
-				? selection.map((fs: ExplorerItem) => fs.resource)
-				: stat instanceof ExplorerItem ? [stat.resource] : []
-		});
+		const showMenu = (): void => {
+			this.contextMenuService.showContextMenu({
+				menuId: MenuId.ExplorerContext,
+				menuActionOptions: { arg, shouldForwardArgs: true },
+				contextKeyService: this.tree.contextKeyService,
+				getAnchor: () => anchor,
+				onHide: (wasCancelled?: boolean) => {
+					if (wasCancelled) {
+						this.tree.domFocus();
+					}
+				},
+				getActionsContext: () => stat && selection && selection.indexOf(stat) >= 0
+					? selection.map((fs: ExplorerItem) => fs.resource)
+					: stat instanceof ExplorerItem ? [stat.resource] : []
+			});
+		};
+		if (stat instanceof ExplorerItem && stat.resource.scheme === 'improve') {
+			this.commandService.executeCommand('improve.resourceSelect', stat?.resource).then(() => {
+				showMenu();
+			});
+		}
+		else {
+			showMenu();
+		}
 	}
 
 	private onFocusChanged(elements: ExplorerItem[]): void {
@@ -755,6 +768,7 @@ export class ExplorerView extends ViewPane implements IExplorerView {
 
 		if (item) {
 			if (item === this.tree.getInput()) {
+
 				this.tree.setFocus([]);
 				this.tree.setSelection([]);
 				return;

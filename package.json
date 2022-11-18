@@ -70,6 +70,7 @@
     "@vscode/sqlite3": "5.1.2-vscode",
     "@vscode/sudo-prompt": "9.3.1",
     "@vscode/vscode-languagedetection": "1.0.21",
+    "caniuse-lite": "^1.0.30001431",
     "graceful-fs": "4.2.8",
     "http-proxy-agent": "^2.1.0",
     "https-proxy-agent": "^2.2.3",

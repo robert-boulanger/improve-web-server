@@ -182,4 +182,46 @@ The only twaek here is to set enable remote settings to false
   );
   ```
 
+### src/vs/workbench/contrib/files/browser/views/explorerView.ts
+
+- Line 589 in setContextKeys
+  ```ts
+  try {
+  	this.commandService.executeCommand(
+  		"improve.resourceSelect",
+  		stat?.resource
+  	);
+  } catch (e) {
+  	console.log("Either no resource or no improve plugin loaded");
+  }
+  ```
+- Line ~592 Set ContextMenus
+
+  The next one is important. WAIT for the execution of the command, and then build the context menu
+  to be sure the context is set by the plugin and
+
+  ```ts
+  this.commandService
+  	.executeCommand("improve.resourceSelect", stat?.resource)
+  	.then(() => {
+  		this.contextMenuService.showContextMenu({
+  			menuId: MenuId.ExplorerContext,
+  			menuActionOptions: { arg, shouldForwardArgs: true },
+  			contextKeyService: this.tree.contextKeyService,
+  			getAnchor: () => anchor,
+  			onHide: (wasCancelled?: boolean) => {
+  				if (wasCancelled) {
+  					this.tree.domFocus();
+  				}
+  			},
+  			getActionsContext: () =>
+  				stat && selection && selection.indexOf(stat) >= 0
+  					? selection.map((fs: ExplorerItem) => fs.resource)
+  					: stat instanceof ExplorerItem
+  					? [stat.resource]
+  					: [],
+  		});
+  	});
+  ```
+
 ### src/vs/workbench/contrib/welcomeGettingStarted/common/gettingStartedContent.ts
