@@ -30,7 +30,7 @@ Note that the workbench can be also bundled independently to serve from some CDN
 
 ### Bundling
 
-Run `yarn gulp vscode-reh-web-linux-x64-min` to create production-ready distributable from sources. After the build is finished, you will be able to find the `vscode-reh-web-linux-x64` folder next to the repository folder (one level up from where you executed the command). In this folder, under `bin/` you will find a `openvscode-server` script: your entrypoint to the OpenVSCode server.
+Run `yarn gulp vscode-reh-web-linux-x64-min` or `yarn gulp vscode-reh-web-darwin-arm64` to create production-ready distributable from sources. After the build is finished, you will be able to find the `vscode-reh-web-linux-x64` folder next to the repository folder (one level up from where you executed the command). In this folder, under `bin/` you will find a `openvscode-server` script: your entrypoint to the OpenVSCode server.
 
 #### Different platforms and CPU architectures
 
@@ -184,44 +184,93 @@ The only twaek here is to set enable remote settings to false
 
 ### src/vs/workbench/contrib/files/browser/views/explorerView.ts
 
-- Line 589 in setContextKeys
+- setContextKeys
+
   ```ts
-  try {
-  	this.commandService.executeCommand(
-  		"improve.resourceSelect",
-  		stat?.resource
-  	);
-  } catch (e) {
-  	console.log("Either no resource or no improve plugin loaded");
+  private setContextKeys(stat: ExplorerItem | null | undefined): void {
+  	if (stat instanceof ExplorerItem && stat.resource.scheme === 'improve') {
+  		this.commandService.executeCommand('improve.resourceSelect', stat?.resource);
+  	}
+  	const folders = this.contextService.getWorkspace().folders;
+  	const resource = stat ? stat.resource : folders[folders.length - 1].uri;
+  	stat = stat || this.explorerService.findClosest(resource);
+  	this.resourceContext.set(resource);
+  	this.folderContext.set(!!stat && stat.isDirectory);
+  	this.readonlyContext.set(!!stat && stat.isReadonly);
+  	this.rootContext.set(!!stat && stat.isRoot);
+
+  	if (resource) {
+  		const overrides = resource ? this.editorResolverService.getEditors(resource).map(editor => editor.id) : [];
+  		this.availableEditorIdsContext.set(overrides.join(','));
+  	} else {
+  		this.availableEditorIdsContext.reset();
+  	}
   }
   ```
-- Line ~592 Set ContextMenus
+
+- Set ContextMenus
 
   The next one is important. WAIT for the execution of the command, and then build the context menu
   to be sure the context is set by the plugin and
 
   ```ts
-  this.commandService
-  	.executeCommand("improve.resourceSelect", stat?.resource)
-  	.then(() => {
-  		this.contextMenuService.showContextMenu({
-  			menuId: MenuId.ExplorerContext,
-  			menuActionOptions: { arg, shouldForwardArgs: true },
-  			contextKeyService: this.tree.contextKeyService,
-  			getAnchor: () => anchor,
-  			onHide: (wasCancelled?: boolean) => {
-  				if (wasCancelled) {
-  					this.tree.domFocus();
+  private async onContextMenu(e: ITreeContextMenuEvent<ExplorerItem>): Promise<void> {
+  		const stat = e.element;
+  		let anchor = e.anchor;
+
+  		// Compressed folders
+  		if (stat) {
+  			const controller = this.renderer.getCompressedNavigationController(stat);
+
+  			if (controller) {
+  				if (e.browserEvent instanceof KeyboardEvent || isCompressedFolderName(e.browserEvent.target)) {
+  					anchor = controller.labels[controller.index];
+  				} else {
+  					controller.last();
   				}
-  			},
-  			getActionsContext: () =>
-  				stat && selection && selection.indexOf(stat) >= 0
+  			}
+  		}
+
+  		// update dynamic contexts
+  		this.fileCopiedContextKey.set(await this.clipboardService.hasResources());
+  		this.setContextKeys(stat);
+
+  		const selection = this.tree.getSelection();
+
+  		const roots = this.explorerService.roots; // If the click is outside of the elements pass the root resource if there is only one root. If there are multiple roots pass empty object.
+  		let arg: URI | {};
+  		if (stat instanceof ExplorerItem) {
+  			const compressedController = this.renderer.getCompressedNavigationController(stat);
+  			arg = compressedController ? compressedController.current.resource : stat.resource;
+  		} else {
+  			arg = roots.length === 1 ? roots[0].resource : {};
+  		}
+
+  		const showMenu = (): void => {
+  			this.contextMenuService.showContextMenu({
+  				menuId: MenuId.ExplorerContext,
+  				menuActionOptions: { arg, shouldForwardArgs: true },
+  				contextKeyService: this.tree.contextKeyService,
+  				getAnchor: () => anchor,
+  				onHide: (wasCancelled?: boolean) => {
+  					if (wasCancelled) {
+  						this.tree.domFocus();
+  					}
+  				},
+  				getActionsContext: () => stat && selection && selection.indexOf(stat) >= 0
   					? selection.map((fs: ExplorerItem) => fs.resource)
-  					: stat instanceof ExplorerItem
-  					? [stat.resource]
-  					: [],
-  		});
-  	});
+  					: stat instanceof ExplorerItem ? [stat.resource] : []
+  			});
+  		};
+  		if (stat instanceof ExplorerItem && stat.resource.scheme === 'improve') {
+  			this.commandService.executeCommand('improve.resourceSelect', stat?.resource).then(() => {
+  				showMenu();
+  			});
+  		}
+  		else {
+  			showMenu();
+  		}
+  	}
   ```
 
 ### src/vs/workbench/contrib/welcomeGettingStarted/common/gettingStartedContent.ts
