@@ -607,6 +607,25 @@ export function setContext(accessor: ServicesAccessor, contextKey: any, contextV
 	contextKeyService.createKey(String(contextKey), stringifyURIs(contextValue));
 }
 
+export function improveGetContext(accessor: ServicesAccessor, contextKey: any) {
+	const contextKeyService = accessor.get(IContextKeyService);
+	return contextKeyService.getContextKeyValue(String(contextKey));
+}
+
+
+export function improveGetAllContexts(accessor: ServicesAccessor) {
+	const contextKeyService = accessor.get(IContextKeyService);
+	const elements = document.getElementsByClassName('editor-group-container');
+	const element = elements[0];
+	const context = contextKeyService.getContext(element) as Context;
+	return context.collectAllValues();
+}
+
+CommandsRegistry.registerCommand('getContext', improveGetContext);
+CommandsRegistry.registerCommand('getAllContexts', improveGetAllContexts);
+
+
+
 function stringifyURIs(contextValue: any): any {
 	return cloneAndChange(contextValue, (obj) => {
 		if (typeof obj === 'object' && (<MarshalledObject>obj).$mid === MarshalledId.Uri) {
