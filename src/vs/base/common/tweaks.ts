@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+/*
 export const hiddenActivities = [
 	'workbench.view.scm',
 	'workbench.view.debug',
@@ -21,4 +22,5 @@ export const hiddenActivities = [
 	'openRecentWorkspace',
 	'workbench.action.files.newUntitledFile',
 	'welcome.showNewFileEntries'];
-
+*/
+export const hiddenActivities = window.localStorage.getItem('improveHiddenActivities') ? JSON.parse(window.localStorage.getItem('improveHiddenActivities')!) : ['none'];

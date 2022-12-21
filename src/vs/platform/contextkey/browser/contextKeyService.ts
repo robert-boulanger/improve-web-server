@@ -621,9 +621,37 @@ export function improveGetAllContexts(accessor: ServicesAccessor) {
 	return context.collectAllValues();
 }
 
+export function improveSetStorage(accessor: ServicesAccessor,key:string, value:any){
+	window.localStorage.setItem(key,value);
+}
+export function improveGetStorage(accessor: ServicesAccessor, key:string){
+	return window.localStorage.getItem(key);
+}
+export function improveSetHiddenActions(accessor: ServicesAccessor, value: string[]) {
+	function arraysAreEqual(a: string[], b: string[]) {
+		if (a.length !== b.length) {
+			return false;
+		}
+		for (let i = 0; i < a.length; i++) {
+			if (a[i] !== b[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+	const current = window.localStorage.getItem('improveHiddenActivities');
+	if (current && arraysAreEqual(JSON.parse(current), value)) {
+		return false;
+	}
+	window.localStorage.setItem('improveHiddenActivities', JSON.stringify(value));
+	return true;
+}
+
 CommandsRegistry.registerCommand('getContext', improveGetContext);
 CommandsRegistry.registerCommand('getAllContexts', improveGetAllContexts);
-
+CommandsRegistry.registerCommand('improveSetStorage', improveSetStorage);
+CommandsRegistry.registerCommand('improveGetStorage', improveGetStorage);
+CommandsRegistry.registerCommand('improveSetHiddenActions', improveSetHiddenActions);
 
 
 function stringifyURIs(contextValue: any): any {

@@ -68,7 +68,7 @@ We remove items from the left sidebar, mostly Debug, SCM and extensions
 - Line 50
 
   ```ts
-  import { hiddenActivities } from "vs/scinteco/tweaks";
+  import { hiddenActivities } from "vs/base/common/tweaks";
   ```
 
 - Line 782
@@ -93,7 +93,7 @@ We remove items from the menu, mostly Run, the Terminal and everythin inside the
 - Line 28
 
   ```ts
-  import { hiddenActivities } from "vs/scinteco/tweaks";
+  import { hiddenActivities } from "vs/base/common/tweaks";
   ```
 
 - Line 515
@@ -110,7 +110,7 @@ Removes everything from the global command palette which we do not need or want
 - Line 25
 
   ```ts
-  import { hiddenActivities } from "vs/scinteco/tweaks";
+  import { hiddenActivities } from "vs/base/common/tweaks";
   ```
 
 - Line 128
@@ -120,31 +120,14 @@ Removes everything from the global command palette which we do not need or want
   }
   ```
 
-### src/vs/scinteco/tweaks.ts
+### src/vs/base/common/tweaks.ts
 
-Configure here all commands in vscode we do not need for improve
+The improve Plugin injects an array called improveHiddenActivities into LocalStorage.
+Here we nothing else, then reading it out and providing a const via this module.
 
 ```ts
-export const hiddenActivities = [
-	"workbench.view.scm",
-	"workbench.view.debug",
-	"workbench.view.extensions",
-	"workbench.action.terminal.toggleTerminal",
-	"terminal",
-	"workbench.action.files.openFile",
-	"workbench.action.files.openFolder",
-	"addRootFolder",
-	"workbench.action.closeFolder",
-	"workbench.action.files.saveAs",
-	"workbench.action.saveWorkspaceAs",
-	"workbench.action.duplicateWorkspaceInNewWindow",
-	"menubar.submenu.Run",
-	"menubar.submenu.Terminal",
-	"workbench.action.openWorkspace",
-	"openRecentWorkspace",
-	"workbench.action.files.newUntitledFile",
-	"welcome.showNewFileEntries",
-];
+export const hiddenActivities = window.localStorage.getItem('improveHiddenActivities') ? JSON.parse(window.localStorage.getItem('improveHiddenActivities')!) : ['none'];
+
 ```
 
 ### src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.ts
@@ -169,7 +152,9 @@ This changes only the text in the welcome page
 ### src/vs/workbench/contrib/preferences/browser/settingsEditor2.ts
 
 We remove any chance for the user to change the global settings server side, which would allow th change the behaviour for all users. This can only be done by an admin who has access to the server side settings.json.
-The only twaek here is to set enable remote settings to false
+The only twaek here is to set enable remote settings to false.
+
+Update: Since we decided to just release a desktop version, this might not be necessary in the future.
 
 - Line 612
   ```ts
@@ -184,6 +169,8 @@ The only twaek here is to set enable remote settings to false
 
 ### src/vs/workbench/contrib/files/browser/views/explorerView.ts
 
+To get a trigger whenever a user clicks on a file or folder in the explorer view, we need to overwrite the setContextKeys function.
+Here we call improve.resourceSelect with the resource as parameter.
 - setContextKeys
 
   ```ts
@@ -272,5 +259,68 @@ The only twaek here is to set enable remote settings to false
   		}
   	}
   ```
+
+ ### src/vs/platform/contextkey/browser/contextKeyService.ts
+  around Line 610
+
+  We urgently need also a command to Get Context Keys to be able to hide and show UI ELements properly. We also implanted a few convinience methods for setting hiddenActivities and getting all contexts.
+
+	```ts
+export function improveGetContext(accessor: ServicesAccessor, contextKey: any) {
+	const contextKeyService = accessor.get(IContextKeyService);
+	return contextKeyService.getContextKeyValue(String(contextKey));
+}
+
+
+export function improveGetAllContexts(accessor: ServicesAccessor) {
+	const contextKeyService = accessor.get(IContextKeyService);
+	const elements = document.getElementsByClassName('editor-group-container');
+	const element = elements[0];
+	const context = contextKeyService.getContext(element) as Context;
+	return context.collectAllValues();
+}
+
+export function improveSetStorage(accessor: ServicesAccessor,key:string, value:any){
+	window.localStorage.setItem(key,value);
+}
+export function improveGetStorage(accessor: ServicesAccessor, key:string){
+	return window.localStorage.getItem(key);
+}
+export function improveSetHiddenActions(accessor: ServicesAccessor, value: string[]) {
+	function arraysAreEqual(a: string[], b: string[]) {
+		if (a.length !== b.length) {
+			return false;
+		}
+		for (let i = 0; i < a.length; i++) {
+			if (a[i] !== b[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+	const current = window.localStorage.getItem('improveHiddenActivities');
+	if (current && arraysAreEqual(JSON.parse(current), value)) {
+		return false;
+	}
+	window.localStorage.setItem('improveHiddenActivities', JSON.stringify(value));
+	return true;
+}
+
+CommandsRegistry.registerCommand('getContext', improveGetContext);
+CommandsRegistry.registerCommand('getAllContexts', improveGetAllContexts);
+CommandsRegistry.registerCommand('improveSetStorage', improveSetStorage);
+CommandsRegistry.registerCommand('improveGetStorage', improveGetStorage);
+CommandsRegistry.registerCommand('improveSetHiddenActions', improveSetHiddenActions);
+
+	```
+
+### src/vs/base/common/product.ts
+
+Add additional property to product.json
+```
+// improve
+	readonly hiddenActivities?: Array<string>;
+```
+
 
 ### src/vs/workbench/contrib/welcomeGettingStarted/common/gettingStartedContent.ts
