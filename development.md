@@ -36,6 +36,14 @@ Run `yarn gulp vscode-reh-web-linux-x64-min` or `yarn gulp vscode-reh-web-darwin
 
 If you want to have distributables for more types of hardware and operating systems, your folder names and the main command for compiling will change. You can find all of the gulp bundling tasks [here](https://github.com/gitpod-io/openvscode-server/blob/main/build/gulpfile.js) and if you execute `yarn gulp --tasks | grep "vscode-reh-web"` you will get all of the different distribution targets available (the options here are also the corresponding commands for bundling, which you need to prefix with `yarn gulp` in the terminal).
 
+#### Windows
+```powershell
+yarn gulp vscode-win32-x64
+yarn gulp vscode-win32-x64-inno-updater
+yarn gulp vscode-win32-x64-user-setup
+```
+
+
 ### Updating VS Code
 
 - Update your local VS Code, open the About dialog and remember the release commit and Node.js version.
@@ -265,7 +273,7 @@ Here we call improve.resourceSelect with the resource as parameter.
 
   We urgently need also a command to Get Context Keys to be able to hide and show UI ELements properly. We also implanted a few convinience methods for setting hiddenActivities and getting all contexts.
 
-	```ts
+```ts
 export function improveGetContext(accessor: ServicesAccessor, contextKey: any) {
 	const contextKeyService = accessor.get(IContextKeyService);
 	return contextKeyService.getContextKeyValue(String(contextKey));
@@ -312,7 +320,7 @@ CommandsRegistry.registerCommand('improveSetStorage', improveSetStorage);
 CommandsRegistry.registerCommand('improveGetStorage', improveGetStorage);
 CommandsRegistry.registerCommand('improveSetHiddenActions', improveSetHiddenActions);
 
-	```
+```
 
 ### src/vs/base/common/product.ts
 
